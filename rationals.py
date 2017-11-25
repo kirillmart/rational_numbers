@@ -1,3 +1,5 @@
+from math import gcd
+
 class Rational:
     def __init__(self, x, y):
         if type(x) != int or type(y) != int or y == 0:
@@ -28,6 +30,15 @@ class Rational:
             self.y
         )
 
+    def __add__(self, other):
+        commonznam = (self.y * other.y) // gcd(self.y, other.y)
+        print(commonznam)
+        return Rational(
+            (self.x * commonznam) + (
+            other.x * (commonznam / other.y)),
+            commonznam
+        )
+
 
 if __name__ == "__main__":
     print("Start Tests")
@@ -37,6 +48,9 @@ if __name__ == "__main__":
     assert Rational(2, 6) == Rational(1, 3)
     assert Rational(1, 3) == Rational(1, 3)
     assert Rational(4, 3) == Rational(8, 6)
+
+    x = a + b
+    assert x == Rational(18, 20)
 
     x = a * b
     assert x == Rational(8, 20)
