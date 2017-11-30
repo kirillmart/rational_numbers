@@ -13,17 +13,39 @@ class Rational:
             self.y * other.y
         )
 
-    # TODO check it
-    # do we really need methods with __i*__?
-    # def __imul__(self, other):
-    #     return self.__mul__(other)
-
-    def reduce_rational(self):
-        if self.x % 2 == 0 and self.y % 2 == 0:
-            while self.x % 2 == 0 and self.y % 2 == 0:
-                self.x /= 2
-                self.y /= 2
-        return Rational(self.x, self.y)
+    def __reduce__(self):
+        if self.x > self.y:
+            i = 1
+            while i:
+                if self.x % self.y == 0:
+                    return Rational(int(self.x / self.y), int(self.y / self.y))
+                if self.x % 2 == 0 and self.y % 2 == 0:
+                    self.x /= 2
+                    self.y /= 2
+                    continue
+                if self.x % 3 == 0 and self.y % 3 == 0:
+                    self.x /= 3
+                    self.y /= 3
+                    continue
+                else:
+                    return Rational(int(self.x), int(self.y))
+        if self.y > self.x:
+            i = 1
+            while i:
+                if self.y % self.x == 0:
+                    return Rational(int(self.x / self.x), int(self.y / self.x))
+                if self.x % 2 == 0 and self.y % 2 == 0:
+                    self.x /= 2
+                    self.y /= 2
+                    continue
+                if self.x % 3 == 0 and self.y % 3 == 0:
+                    self.x /= 3
+                    self.y /= 3
+                    continue
+                else:
+                    return Rational(int(self.x), int(self.y))
+        else:
+            return Rational(1, 1)
 
     def __eq__(self, other):
         return self.x * other.y == self.y * other.x
@@ -68,11 +90,36 @@ class Rational:
             (int(lcd / self.y) * self.x) + (int(lcd / other.y) * other.x), lcd
         )
 
+    def __sub__(self, other):
+        lcd = 1
+        if self.y > other.y:
+            for i in range(1, 100):
+                if (self.y * i) % int(other.y) == 0:
+                    lcd = self.y * i
+                    break
+        elif self.y < other.y:
+            for i in range(1, 100):
+                if (other.y * i) % int(self.y) == 0:
+                    lcd = other.y * i
+                    break
+        else:
+            lcd = self.y
+        return Rational(
+            (int(lcd / self.y) * self.x) - (int(lcd / other.y) * other.x), lcd
+        )
+
+    def __truediv__(self, other):
+        return Rational(
+            self.x * other.y,
+            self.y * other.x
+        )
+
 
 if __name__ == "__main__":
     print("Start Tests")
     a = Rational(2, 4)
     b = Rational(4, 5)
+    c = Rational(2, 4)
 
     assert Rational(2, 6) == Rational(1, 3)
     assert Rational(1, 3) == Rational(1, 3)
@@ -81,16 +128,24 @@ if __name__ == "__main__":
     n = a + b
     assert n == Rational(26, 20)
 
+    m = a - b
+    assert m == Rational(-6, 20)
+
+    k = a / b
+    assert k == Rational(10, 16)
+
     x = a * b
     assert x == Rational(8, 20)
     a *= b
     assert a == Rational(8, 20)
 
-
+    assert c.__reduce__() == Rational(1, 2)
 
     print(a)
     print(b)
+    print(n)
+    print(m)
+    print(k)
+    print(c.__reduce__())
     print("End Tests")
-
-    "fdfdf"
 
